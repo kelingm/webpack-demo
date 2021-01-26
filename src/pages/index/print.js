@@ -1,5 +1,5 @@
-export function printMe() {
-  console.log('I get called from print.js!' + 666);
+function printMe() {
+  console.log(`I get called from print.js!${44}`);
 }
 
-export const a = 1;
+export default printMe;
