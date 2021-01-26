@@ -1,19 +1,18 @@
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 // const LocalStoragePlugin = require("../plugin/localStoragePlugin");
-const webpack = require("webpack");
-const glob = require("glob");
+const webpack = require('webpack');
+const glob = require('glob');
 
 const setMPA = () => {
   const entry = {};
   const htmlWebpackPlugins = [];
   // 按照上面说的格式来动态获取入口文件
-  const entryFiles = glob.sync(path.join(__dirname, "../src/pages/*/index.js"));
+  const entryFiles = glob.sync(path.join(__dirname, '../src/pages/*/index.js'));
 
-  entryFiles.map((entryFile) => {
+  entryFiles.map(entryFile => {
     const match = entryFile.match(/src\/pages\/(.*)\/index.js/);
     const pageName = match && match[1];
     entry[pageName] = entryFile;
@@ -24,15 +23,15 @@ const setMPA = () => {
 
         filename: `${pageName}.html`,
         chunks: [`${pageName}`],
-        inject: true,
-        minify: {
-          html5: true,
-          collapseWhitespace: true,
-          preserveLineBreaks: false,
-          minifyCSS: true,
-          minifyJS: true,
-          removeComments: false,
-        },
+        // inject: true,
+        // minify: {
+        //   html5: true,
+        //   collapseWhitespace: true,
+        //   preserveLineBreaks: false,
+        //   minifyCSS: true,
+        //   minifyJS: true,
+        //   removeComments: false,
+        // },
       })
     );
   });
@@ -46,41 +45,41 @@ const { entry, htmlWebpackPlugins } = setMPA();
 module.exports = {
   entry,
   optimization: {
-    moduleIds: "named",
+    moduleIds: 'named',
     splitChunks: {
-      chunks: "all",
+      chunks: 'all',
     },
   },
   module: {
     rules: [
       {
-        test: /\.(scss|css)$/,
+        test: /\.(s[ac]ss|css)$/,
         use: [
-          process.env.NODE_ENV !== "production"
-            ? "style-loader"
-            : MiniCssExtractPlugin.loader,
-          "css-loader",
-          "sass-loader",
+          MiniCssExtractPlugin.loader,
+          // 'style-loader',
+          // 将 CSS 转化成 CommonJS 模块
+          'css-loader',
+          'sass-loader',
         ],
+        sideEffects: true, // 否则会导致css无法import， 因为开启了treeshaking
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
-        use: ["file-loader"],
+        use: ['file-loader'],
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/,
-        use: ["file-loader"],
+        use: ['file-loader'],
       },
     ],
   },
 
   output: {
-    filename: "[name].bundle.js",
-    path: path.resolve(__dirname, "../dist"),
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, '../dist'),
     // publicPath: "./",
   },
   plugins: [
-    new CleanWebpackPlugin(),
     // new LocalStoragePlugin({
     //   jsOmit: /(async-)|(chunk-)/,
     //   cssOmit: /(async-)|(chunk-)/,
