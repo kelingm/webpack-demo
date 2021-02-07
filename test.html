@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      const socket = new WebSocket('ws://localhost:3000');
+      socket.onopen = function () {
+        console.log('open');
+        socket.send('hhh'); //向服务器发送数据
+      };
+      socket.onmessage = function (e) {
+        console.log(e.data); //接收服务器返回的数据
+      };
+    </script>
+    <form
+      action="https://t-apicloud.ccrgt.com/crgt-test/food-marketing/source/list"
+      method="POST"
+    >
+      <input name="name" type="text" />
+      <input name="password" type="text" />
+      <button>提交</button>
+    </form>
+  </body>
+</html>

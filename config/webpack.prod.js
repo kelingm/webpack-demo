@@ -2,7 +2,9 @@ const { merge } = require('webpack-merge');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const common = require('./webpack.common.js');
+const copyWebpackPlugin = require('../plugin/copyWebpackPlugin.js');
 
 module.exports = merge(common, {
   // devtool: "source-map",
@@ -11,6 +13,13 @@ module.exports = merge(common, {
   optimization: {
     usedExports: true,
     concatenateModules: true,
+    // moduleIds: 'deterministic',
+    moduleIds: 'named',
+    // moduleIds: 'natural',
+    // runtimeChunk: {
+    //   name: (entrypoint) => `runtime~${entrypoint.name}`,
+    // },
+    runtimeChunk: 'single',
   },
   plugins: [
     new CleanWebpackPlugin(),
@@ -23,5 +32,10 @@ module.exports = merge(common, {
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production'),
     }),
+    new ScriptExtHtmlWebpackPlugin({
+      // `runtime` must same as runtimeChunk name. default is `runtime`
+      inline: /runtime\..*\.js$/,
+    }),
+    new copyWebpackPlugin({ name: 'why' }),
   ],
 });

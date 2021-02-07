@@ -4,7 +4,6 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 // const postcssNormalize = require('postcss-normalize');
 
-// const LocalStoragePlugin = require("../plugin/localStoragePlugin");
 const glob = require('glob');
 
 const useRem = true;
@@ -43,7 +42,9 @@ const setMPA = () => {
 const { entry, htmlWebpackPlugins } = setMPA();
 
 const getStyleLoaders = (modules) => [
-  process.env.NODE_ENV === 'production' ? MiniCssExtractPlugin.loader : 'style-loader',
+  process.env.NODE_ENV === 'production'
+    ? MiniCssExtractPlugin.loader
+    : 'style-loader',
   {
     loader: 'css-loader',
     options: {
@@ -65,34 +66,41 @@ const getStyleLoaders = (modules) => [
             },
           ],
           // postcssNormalize(),
-          useRem ? [
-            'postcss-pxtorem', {
-              rootValue: 75,
-              unitPrecision: 5,
-              propList: ['*'],
-              selectorBlackList: ['.ignore', '.hairlines'],
-              replace: true,
-              mediaQuery: false,
-              minPixelValue: 0,
-              exclude: /node_modules/i,
-            },
-          ] : ['postcss-px-to-viewport', { // 使用vw自适应
-            unitToConvert: 'px',
-            viewportWidth: 750,
-            unitPrecision: 5,
-            propList: ['*'],
-            viewportUnit: 'vw',
-            fontViewportUnit: 'vw',
-            selectorBlackList: ['.ignore', '.hairlines'],
-            minPixelValue: 1,
-            mediaQuery: false,
-            replace: true,
-            exclude: /(\/|\\)(node_modules)(\/|\\)/,
-            include: undefined,
-            landscape: false,
-            landscapeUnit: 'vw',
-            landscapeWidth: 568,
-          }],
+          useRem
+            ? [
+                'postcss-pxtorem',
+                {
+                  rootValue: 75,
+                  unitPrecision: 5,
+                  propList: ['*'],
+                  selectorBlackList: ['.ignore', '.hairlines'],
+                  replace: true,
+                  mediaQuery: false,
+                  minPixelValue: 0,
+                  exclude: /node_modules/i,
+                },
+              ]
+            : [
+                'postcss-px-to-viewport',
+                {
+                  // 使用vw自适应
+                  unitToConvert: 'px',
+                  viewportWidth: 750,
+                  unitPrecision: 5,
+                  propList: ['*'],
+                  viewportUnit: 'vw',
+                  fontViewportUnit: 'vw',
+                  selectorBlackList: ['.ignore', '.hairlines'],
+                  minPixelValue: 1,
+                  mediaQuery: false,
+                  replace: true,
+                  exclude: /(\/|\\)(node_modules)(\/|\\)/,
+                  include: undefined,
+                  landscape: false,
+                  landscapeUnit: 'vw',
+                  landscapeWidth: 568,
+                },
+              ],
         ],
       },
     },
@@ -107,6 +115,9 @@ module.exports = {
   //     chunks: 'all',
   //   },
   // },
+  resolveLoader: {
+    modules: ['node_modules', './loader'],
+  },
   module: {
     rules: [
       {
@@ -130,25 +141,13 @@ module.exports = {
     ],
   },
   output: {
-    filename: '[name].bundle.js',
+    filename: '[name].[chunkhash].bundle.js',
     path: path.resolve(__dirname, '../dist'),
-  // publicPath: "./",
+    // publicPath: "./",
   },
   plugins: [
     new ESLintPlugin({
       extensions: ['js', 'mjs', 'jsx', 'ts', 'tsx'],
     }),
-  // new LocalStoragePlugin({
-  //   jsOmit: /(async-)|(chunk-)/,
-  //   cssOmit: /(async-)|(chunk-)/,
-  //   type: "indexedDB",
-  //   debug: true,
-  //   dbConf: {
-  //     dbName: "test",
-  //     version: 1,
-  //     storeName: "cache",
-  //     storeKey: "path",
-  //   },
-  // }),
   ].concat(htmlWebpackPlugins),
 };
